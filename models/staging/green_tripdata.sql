@@ -1,0 +1,1 @@
+select * from {{ source('raw_data', 'external_green_tripdata') }} limit 1000;

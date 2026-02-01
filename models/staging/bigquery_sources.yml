@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: raw_data
+    description: "Raw data source from NYC taxi rides dataset"
+    datbase: psyched-loader-485321-a8
+    schema: zoomcamp
+    tables: 
+      - name: yellow_tripdata_partitioned
+        description: "Yellow taxi ride data"
+      - name: external_green_tripdata
+        description: "Green taxi ride data"
+
