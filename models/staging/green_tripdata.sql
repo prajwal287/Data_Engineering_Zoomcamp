@@ -1,1 +1,1 @@
-select * from {{ source('raw_data', 'external_green_tripdata') }} limit 1000;
+select * from {{ source('raw_data', 'yellow_tripdata_partitioned') }} limit 1000;
