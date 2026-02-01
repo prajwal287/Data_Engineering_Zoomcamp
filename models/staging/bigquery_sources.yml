@@ -8,6 +8,6 @@ sources:
     tables: 
       - name: yellow_tripdata_partitioned
         description: "Yellow taxi ride data"
-      - name: external_green_tripdata
+      - name: yellow_tripdata_non_partitioned
         description: "Green taxi ride data"
 
