@@ -6,8 +6,8 @@ sources:
     database: psyched-loader-485321-a8
     schema: zoomcamp
     tables: 
-      - name: yellow_tripdata_partitioned
+      - name: yellow_tripdata
         description: "Yellow taxi ride data"
-      - name: yellow_tripdata_non_partitioned
+      - name: green_tripdata
         description: "Green taxi ride data"
 
