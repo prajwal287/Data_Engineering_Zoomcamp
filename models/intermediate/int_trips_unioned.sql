@@ -49,8 +49,12 @@ yellow_trips as (
         payment_type,
         'Yellow' as service_type
     from {{ ref('stg_yellow_tripdata') }}
+), 
+
+trips_unioned as (
+    select * from green_trips
+    union all
+    select * from yellow_trips
 )
 
-select * from green_trips
-union all
-select * from yellow_trips
+select * from trips_unioned;
