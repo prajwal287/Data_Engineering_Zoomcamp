@@ -1,0 +1,66 @@
+id: HW3
+namespace: zoomcamp
+description: |
+  Pulling Yellow Taxi Parquet data for 2024 (Jan to June) 
+  from Cloudfront to GCS and BigQuery.
+
+variables:
+  # Base URL provided
+  base_url: "https://d37ci6vzurychx.cloudfront.net/trip-data"
+  taxi: "yellow"
+  year: "2024"
+
+tasks:
+  - id: for_each_month
+    type: io.kestra.plugin.core.flow.ForEach
+    values: ["01", "02", "03", "04", "05", "06"] # The months you requested
+    concurrencyLimit: 1 # Process one by one to avoid hitting rate limits
+    tasks:
+      - id: extract
+        type: io.kestra.plugin.scripts.shell.Commands
+        taskRunner:
+          type: io.kestra.plugin.core.runner.Process
+        commands:
+          # Download Parquet file: e.g., yellow_tripdata_2024-01.parquet
+          - wget -q "{{vars.base_url}}/{{vars.taxi}}_tripdata_{{vars.year}}-{{taskrun.value}}.parquet"
+        outputFiles:
+          - "*.parquet"
+
+      - id: upload_to_gcs
+        type: io.kestra.plugin.gcp.gcs.Upload
+        from: "{{outputs.extract[taskrun.value].outputFiles[vars.taxi ~ '_tripdata_' ~ vars.year ~ '-' ~ taskrun.value ~ '.parquet']}}"
+        to: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.taxi}}_tripdata_{{vars.year}}-{{taskrun.value}}.parquet"
+
+      - id: create_external_table
+        type: io.kestra.plugin.gcp.bigquery.Query
+        sql: |
+          CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.{{vars.taxi}}_tripdata_{{vars.year}}_{{taskrun.value}}_ext`
+          OPTIONS (
+              format = 'PARQUET',
+              uris = ['gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.taxi}}_tripdata_{{vars.year}}-{{taskrun.value}}.parquet']
+          );
+
+      - id: merge_into_master_table
+        type: io.kestra.plugin.gcp.bigquery.Query
+        sql: |
+          -- 1. Create the master table if it doesn't exist
+          CREATE TABLE IF NOT EXISTS `{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.yellow_tripdata_master`
+          PARTITION BY DATE(tpep_pickup_datetime)
+          AS 
+          SELECT * FROM `{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.{{vars.taxi}}_tripdata_{{vars.year}}_{{taskrun.value}}_ext` 
+          WHERE 1=0; -- Creates schema without data
+
+          -- 2. Insert only new data (simple append for this course homework)
+          INSERT INTO `{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.yellow_tripdata_master`
+          SELECT * FROM `{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.{{vars.taxi}}_tripdata_{{vars.year}}_{{taskrun.value}}_ext`;
+
+  - id: purge_files
+    type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{ secret('GCP_Prajwal') }}"
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"
