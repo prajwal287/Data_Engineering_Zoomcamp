@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: fct_trips
+    description: |
+      Fact table containing all taxi trips from both yellow and green taxis.
+      
+      This is the core analytical table for trip-level analysis.
+      Each row represents a single trip with:
+      - Trip identifiers and service type
+      - Pickup and dropoff locations and timestamps
+      - Trip details (distance, passenger count, etc.)
+      - Payment information and amounts
+      
+      Data is filtered for 2019-2020 only and excludes records
+      with unknown pickup or dropoff locations.

@@ -2,11 +2,23 @@ version: 2
 
 sources:
   - name: raw_data
-    description: "Raw data source from NYC taxi rides dataset"
+    description: >
+      Raw NYC taxi trip data loaded from BigQuery external tables.
+      Contains both yellow and green taxi trip records for 2019-2020.
     database: psyched-loader-485321-a8
     schema: zoomcamp
     tables:
       - name: yellow_tripdata
-        description: "Yellow taxi ride data"
+        description: >
+          Green taxi trip records. Green taxis operate primarily in
+          outer boroughs (outside Manhattan).
+        loaded_at_field: lpep_pickup_datetime
+        freshness:
+          warn_after: {count: 6, period: hour}
+          error_after: {count: 12, period: hour}
       - name: green_tripdata
         description: "Green taxi ride data"
+        loaded_at_field: tpep_pickup_datetime
+        freshness:
+          warn_after: {count: 6, period: hour}
+          error_after: {count: 12, period: hour}
