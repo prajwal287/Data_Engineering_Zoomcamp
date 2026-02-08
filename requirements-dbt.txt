@@ -1,0 +1,4 @@
+# dbt Core + BigQuery adapter for local development
+# Install: pip install -r requirements-dbt.txt
+# Why: dbt-bigquery pulls in dbt-core; using a venv keeps dbt isolated from other Python projects.
+dbt-bigquery>=1.8.0,<3.0.0

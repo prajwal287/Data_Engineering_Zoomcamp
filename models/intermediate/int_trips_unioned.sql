@@ -57,4 +57,4 @@ trips_unioned as (
     select * from yellow_trips
 )
 
-select * from trips_unioned;
+select * from trips_unioned

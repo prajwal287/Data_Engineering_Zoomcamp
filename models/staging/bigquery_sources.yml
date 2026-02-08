@@ -22,3 +22,5 @@ sources:
         freshness:
           warn_after: {count: 6, period: hour}
           error_after: {count: 12, period: hour}
+      - name: taxi_zone_lookup
+        description: "NYC taxi zone lookup (LocationID, Borough, Zone, service_zone)"

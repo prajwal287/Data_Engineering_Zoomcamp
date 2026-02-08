@@ -23,6 +23,9 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# dbt profile (may contain credentials — use profiles.yml.example as template)
+profiles.yml
+
 # Virtual environments
 venv/
 env/

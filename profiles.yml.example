@@ -1,0 +1,22 @@
+# Copy this file to ~/.dbt/profiles.yml and fill in your values.
+# Never commit the real profiles.yml — it can contain credentials.
+#
+# Why profiles.yml? dbt uses it to know HOW to connect to your warehouse
+# (BigQuery here). The profile name "default" must match profile: in dbt_project.yml.
+
+default:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth   # Browser login. Use "service_account" + keyfile for automation.
+      project: psyched-loader-485321-a8   # Your GCP project ID (from bigquery_sources.yml)
+      dataset: zoomcamp                    # Default dataset/schema (where dbt will create views/tables)
+      # location: US   # Uncomment and set if your dataset is not in US multi-region
+      threads: 4
+    prod:
+      type: bigquery
+      method: oauth
+      project: psyched-loader-485321-a8
+      dataset: zoomcamp
+      threads: 4
