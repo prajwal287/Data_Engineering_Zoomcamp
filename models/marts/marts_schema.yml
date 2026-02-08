@@ -14,3 +14,28 @@ models:
       
       Data is filtered for 2019-2020 only and excludes records
       with unknown pickup or dropoff locations.
+    columns:
+      - name: payment_type
+        description: 1=Credit card, 2=Cash, 3=No charge, 4=Dispute, 5=Unknown, 6=Voided trip
+        tests:
+          - accepted_values:
+              values: [1, 2, 3, 4, 5]
+              quote: false
+
+  - name: fct_monthly_zone_revenue
+    description: |
+      One row per month per pickup zone with trip count and total revenue.
+      Use for reporting and dashboards (monthly revenue by zone).
+    columns:
+      - name: revenue_month
+        description: First day of the month (date) for the aggregation
+      - name: pickup_location_id
+        description: Taxi zone ID (LocationID) for pickup
+      - name: zone
+        description: Zone name from dim_zones
+      - name: borough
+        description: Borough name from dim_zones
+      - name: trip_count
+        description: Number of trips in that month and zone
+      - name: total_revenue
+        description: Sum of total_amount for trips in that month and zone
