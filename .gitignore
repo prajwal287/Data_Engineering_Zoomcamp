@@ -60,6 +60,7 @@ uv.lock
 
 # Data files (common in data engineering projects)
 *.csv
+*.csv.gz
 *.parquet
 *.json
 data/
@@ -67,9 +68,9 @@ data/
 *.sqlite
 *.sqlite3
 
+
 # Jupyter
 .ipynb_checkpoints/
-*.ipynb
 
 # OS
 .DS_Store
@@ -92,3 +93,7 @@ target/
 dbt_packages/
 logs/
 # end dbt Cloud content
+
+03-Spark-batch-procesing/fhvhv/
+03-Spark-batch-procesing/*.csv*
+03-Spark-batch-procesing/*.parquet*
